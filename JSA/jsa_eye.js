@@ -1,5 +1,8 @@
 import { bdd,kw,user} from "./bdd.js";
 import { $Bkg,Dc,Wn } from "./jsa_background.js";
+// EYE_MODULE follow the scripts and detect malware
+// This module IS NOT destined for the isolation of the malware
+
 const Usr = {
   lvl: 2,
 };
@@ -138,4 +141,5 @@ function scan(s){return s;}
 let k = "document.addEventListener('keypress', (e) => {fetch()})";
 console.log(d_obf(``));
 const _jsa_eye = new EYE_MODULE();
+
 _jsa_eye.DETECTION_OBF("alert('rnd')")
