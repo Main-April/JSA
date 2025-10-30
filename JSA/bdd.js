@@ -29,7 +29,7 @@ export const bdd = {
   d_obf:{
     kw : {
       fuck : /^[\s\[\]\(\)\!\+]+$/,
-      
+      unicode : /\\(?:u[0-9A-Fa-f]{4}|u\{[0-9A-Fa-f]+\}|x[0-9A-Fa-f]{2})/g,
     }
   }
 };
@@ -38,4 +38,5 @@ export const kw = ["function","typeof","var","const","let","object",
 
 export const user = {
   lvl : 3,
+
 }
