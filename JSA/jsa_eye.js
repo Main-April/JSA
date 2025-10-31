@@ -1,27 +1,39 @@
 import { bdd,kw,user} from "./bdd.js";
 import { $Bkg,Dc,Wn } from "./jsa_background.js";
-// EYE_MODULE follow the scripts and detect malware
-// This module IS NOT destined for the isolation of the malware
 
 const Usr = {
   lvl: 2,
 };
-$Eye = {
-  Alert: {},
-  Scn : function () {},
-};
+
+$Eye.Scn = function(s, t) {
+  s = s.toString();
+  let b = bdd[t].content;
+  let r = bdd[t];
+  for (let i = 0; i < b.length; i++) {
+    if (b[i].reg.test(s)) {
+      return {
+        id: b[i].id,
+        type: r.type,
+        risk: r.risk + " / " + r.level[1],
+        lvl: b[i].lvl,
+      };
+    }
+  }
+  return false;
+}
+
 
 $Eye.Key = function (){
   $Bkg.Mnk_Pth.KeyFuc();
   Dc.addEventListener = function(e,v){
     if(["keydown","keyup","keypress"].includes(e)){
-        $Eye.Alert["Keylog"] = "Keylog:1002/DC.ADDEVENTLISTENER";
-        $Eye.Scn();
+        $Eye.Alert["Keylog"] = ["Keylog:1002/DC.ADDEVENTLISTENER",$Eye.Snf()];
+        $Eye.Scn(document.scripts,"keylogger");
     }else $Bkg.Mnk_Pth.AddEvn.call(this,e,v);
   }
-  Dc.onkeydown,Dc.onkeyup,Dc.onkeypress = function(e){
-    $Eye.Alert["Keylog"] = "Keylog:1001/DC.ONKEY";
-    $Eye.Scn();
+  Dc.onkeydown,Dc.onkeyup,Dc.onkeypress = ()=>{
+    $Eye.Alert["Keylog"] = ["Keylog:1001/DC.ONKEY",$Eye.Snf()];
+    $Eye.Scn(document.scripts,"keylogger");
   }
 }
 // N'utiliser qu'en cas D'URGENCE ABSOLUE (menace présente ou non, impossible à désaciver)
@@ -30,6 +42,15 @@ $Eye.Key_Alt = function (){
     e.stopImmediatePropagation();
     e.preventDefault()
   })
+}
+
+$Eye.Snf = function () {
+  let e = new Error.stack.split("@");
+  return {
+    method : e[0],
+    file : e[2].split("code")[0],
+    place : e[2].split["code"][1]
+  }
 }
 
 $Eye.Obf = class {
@@ -54,8 +75,8 @@ $Eye.Obf = class {
     if (typeof s !== "string") return false;
     let b = bdd.d_obf.kw;
     let n = 0;
-    for (let k in b) {
-      let v = b[k];
+    for (let i in b) {
+      let v = b[i];
       if (typeof v === "string") {
         if (s.includes(v)) n++;
       } 
@@ -101,23 +122,6 @@ $Eye.Obf = class {
 
 
 
-function b_s(s, t) {
-  s = s.toString();
-  let b = bdd[t].content;
-  let r = bdd[t];
-  for (let i = 0; i < b.length; i++) {
-    if (b[i].reg.test(s)) {
-      return {
-        id: b[i].id,
-        type: r.type,
-        risk: r.risk + " / " + r.level[1],
-        lvl: b[i].lvl,
-      };
-    }
-  }
-  return false;
-}
-
 function on() {
   let c = localStorage.getItem("_jsa") ? true : false;
   if (!c) {
@@ -141,5 +145,4 @@ function scan(s){return s;}
 let k = "document.addEventListener('keypress', (e) => {fetch()})";
 console.log(d_obf(``));
 const _jsa_eye = new EYE_MODULE();
-
 _jsa_eye.DETECTION_OBF("alert('rnd')")
