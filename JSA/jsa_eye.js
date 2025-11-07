@@ -43,7 +43,7 @@ $Eye.Key_Alt = function (){
     e.preventDefault()
   })
 }
-
+// SNifferModule : avoir la ligne et le fichiers pour détection/quarantaine
 $Eye.Snf = function () {
   let e = new Error.stack.split("@");
   return {
@@ -61,7 +61,7 @@ $Eye.Obf = class {
     let p = s.split(";");
     for (let i = 0; i < p.length; i++) {
       try {
-        if (this.Kew(p[i]) || Usr.lvl <= this.CREATE_MOTIF(p[i])) {
+        if (this.Kew(p[i]) || Usr.lvl <= this.Mot(p[i])) {
           e++;
         }
       } catch (err) {
@@ -94,7 +94,7 @@ $Eye.Obf = class {
     return n > 0;
   }
 
-  CREATE_MOTIF(s) {
+  Mot(s) {
     if (typeof s !== "string" || s.length === 0) return 0;
     let counts = {};
     s = s.split(".").split("(").split(")").split("{").split("}")
@@ -104,7 +104,7 @@ $Eye.Obf = class {
 
   }
 
-  HAVE_ELEMENT(...e) {
+  El(...e) {
     for (let i = 0; i < e.length; i++) {
       try {
         if (document.querySelector(e[i])) return true;
@@ -120,6 +120,26 @@ $Eye.Obf = class {
   }
 }
 
+//DANGEROUS-KEYWORDS->OBFUSCAT-DETECTION->PARSERJSA->ANALYE
+// Le parser s'occupe de simplifier les fonction, lignes, ...
+$Eye.Parser = function (s){
+  let vars = ["var","let","const"]
+  function Ret(s,a){
+    for(i=0;i<a.length;i++){
+      if(s.includes(s[i])) return true,i
+    }
+    return false
+  }
+  if(Ret(s,vars)[0] && !s.includes("function")) {
+    s = s.replace(vars[Ret(s,vars)[1]],"").replace("=",":").replace("'","").replace("\"","");
+    t = typeof s.split(s.indexOf(":"),s.length);
+    return t+s;
+  }
+  if(s.includes("function")||s.includes("=>")){
+    s = s.replace("(","[").replace(")","]").replace("{","").replace("=>").replace("}","").split(" ")
+    return s[0]?s[0]:"function"+":"+s[1]
+  }
+}
 
 
 function on() {
